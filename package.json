@@ -1,5 +1,5 @@
 {
-  "name": "@umar/use-localstorage-hook",
+  "name": "@mdus/use-localstorage-hook",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",

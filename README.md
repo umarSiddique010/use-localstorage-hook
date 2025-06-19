@@ -48,9 +48,9 @@ It handles:
 ## Installation
 
 ```bash
-npm install @umar/use-localstorage-hook
+npm install @mdus/use-localstorage-hook
 # or
-yarn add @umar/use-localstorage-hook
+yarn add @mdus/use-localstorage-hook
 ```
 
 ---
@@ -80,7 +80,7 @@ yarn add @umar/use-localstorage-hook
 ### 1. Basic Initialization
 
 ```jsx
-import useLocalstorage from "@umar/use-localstorage-hook";
+import useLocalstorage from "@mdus/use-localstorage-hook";
 
 function ThemeToggle() {
   const { getStore, setStore } = useLocalstorage("theme", "light");
