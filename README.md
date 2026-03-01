@@ -1,283 +1,115 @@
-# useLocalstorage
 
-A React hook for safe, reactive access to `localStorage`, with:
+# <img src="./assets/icon.png" height="45" align="top"> @mdus/use-localstorage-hook @mdus/use-localstorage-hook
 
-* Reactive state management with automatic re-renders
-* Cross-tab synchronization via storage events
-* Auto-initialization on mount with validation
-* Built-in `set`, `get`, `remove`, `clearAll` helpers
-* Support for any JSON-serializable data
-* Error-resilient design with comprehensive error handling
-* Zero dependencies — just native Web APIs + React
+A robust, zero-dependency React hook to manage localStorage state with cross-tab synchronization and reactivity.
 
----
+[![npm version](https://img.shields.io/npm/v/@mdus/use-localstorage-hook?style=flat-square&color=blue)](https://www.npmjs.com/package/@mdus/use-localstorage-hook)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Minified Size](https://img.shields.io/bundlephobia/minzip/@mdus/use-localstorage-hook?style=flat-square&label=minzipped)](https://bundlephobia.com/package/@mdus/use-localstorage-hook)
+[![React](https://img.shields.io/npm/dependency-version/@mdus/use-localstorage-hook/peer/react?style=flat-square)](https://react.dev/)
 
-## Why Use This Hook?
+## ✨ Features
 
-> No more repeating `localStorage.setItem` logic in every component.
+- **🔄 Cross-Tab Synchronization:** Instantly updates state across different browser tabs/windows using the native `storage` event listener.
+- **🛡️ Robust Error Handling:** Wrapped in safe `try/catch` blocks to prevent app crashes if `localStorage` is disabled, full, or corrupted.
+- **⚡ Reactive:** Behaves just like `useState`. Updates trigger immediate re-renders.
+- **🔢 Auto-Serialization:** Automatically handles `JSON.stringify` on writes and `JSON.parse` on reads.
+- **🧹 Clean API:** Provides intuitive helpers like `removeStore` and `clearAllStore`.
+- **📦 Zero Dependencies:** Lightweight and focused.
 
-`useLocalstorage` is for React developers who want:
+## 📦 Installation
 
-* Reactive localStorage state that updates your UI automatically
-* Cross-tab synchronization - changes in one tab update others
-* One-liner setup of persistent browser state
-* Safety against stale keys or malformed data
-* Clean `set/get/remove` operations without spaghetti
-* Auto-persisted defaults on first load
-* Reusability across apps, components, and projects
-
-**Perfect for:**
-
-* Auth tokens or user session keys
-* UI preferences (dark mode, language)
-* Cart data or product filters
-* Any local-only persistence logic that needs cross-tab sync
-
----
-
-## What Is This?
-
-`useLocalstorage()` is a custom React hook that wraps the native `localStorage` API in a safe, reactive, composable way.
-
-It handles:
-
-* Reactive state management with `useState`
-* Cross-tab synchronization with storage events
-* When to write to localStorage (`useEffect`)
-* How to write (with stringification and error handling)
-* Reading, removing, and clearing browser keys
-* Making it all memoized and safe for reuse
-
----
-
-## Installation
+Install the package via your preferred package manager:
 
 ```bash
+# npm
 npm install @mdus/use-localstorage-hook
-# or
+
+# yarn
 yarn add @mdus/use-localstorage-hook
+
+# pnpm
+pnpm add @mdus/use-localstorage-hook
 ```
 
----
+## 💻 Quick Start
 
-## API Reference
-
-### What It Expects
-
-| Argument      | Type     | Required | Description                                             |
-| ------------- | -------- | -------- | ------------------------------------------------------- |
-| `storeName`   | `string` | Yes      | The key to use inside localStorage                      |
-| `initialData` | `any`    | Yes      | The default data to initialize if the key is empty/null |
-
-### What It Returns
-
-| Key             | Type       | Description                                                    |
-| --------------- | ---------- | -------------------------------------------------------------- |
-| `getStore`      | `any`      | The current value from localStorage (reactive state)           |
-| `setStore`      | `function` | Sets a value into `localStorage` and updates the reactive state |
-| `removeStore`   | `function` | Removes the item with this key from localStorage               |
-| `clearAllStore` | `function` | Clears **all** localStorage entries                            |
-
----
-
-## Usage
-
-### 1. Basic Reactive State
+Here is a simple example of how to persist a user's theme preference.
 
 ```jsx
-import useLocalstorage from "@mdus/use-localstorage-hook";
+import React from 'react';
+import useLocalstorage from '@mdus/use-localstorage-hook';
 
-function ThemeToggle() {
-  const { getStore: theme, setStore: setTheme } = useLocalstorage("theme", "light");
+const ThemeSwitcher = () => {
+  // Initialize storage with a key and a default value
+  const { getStore, setStore, removeStore } = useLocalstorage('app-theme', 'light');
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    const newTheme = getStore === 'light' ? 'dark' : 'light';
+    setStore(newTheme);
   };
 
   return (
-    <div className={theme}>
-      <p>Current theme: {theme}</p>
-      <button onClick={toggleTheme}>Toggle Theme</button>
-    </div>
-  );
-}
-```
-
-### 2. Cross-Tab Synchronization
-
-```jsx
-function UserPreferences() {
-  const { getStore: prefs, setStore: setPrefs } = useLocalstorage("userPrefs", {
-    language: "en",
-    notifications: true
-  });
-
-  // This will automatically update across all open tabs
-  const updateLanguage = (lang) => {
-    setPrefs({ ...prefs, language: lang });
-  };
-
-  return (
-    <div>
-      <p>Language: {prefs.language}</p>
-      <button onClick={() => updateLanguage("es")}>Switch to Spanish</button>
-    </div>
-  );
-}
-```
-
-### 3. Managing Complex Data
-
-```jsx
-function ShoppingCart() {
-  const { getStore: cart, setStore: setCart, removeStore } = useLocalstorage("cart", []);
-
-  const addItem = (item) => {
-    setCart([...cart, item]);
-  };
-
-  const clearCart = () => {
-    removeStore();
-  };
-
-  return (
-    <div>
-      <p>Items in cart: {cart.length}</p>
-      <button onClick={() => addItem({ id: Date.now(), name: "Product" })}>
-        Add Item
+    <div style={{ background: getStore === 'light' ? '#fff' : '#333', padding: '20px' }}>
+      <h1>Current Theme: {getStore}</h1>
+      
+      <button onClick={toggleTheme}>
+        Toggle Theme
       </button>
-      <button onClick={clearCart}>Clear Cart</button>
+      
+      <button onClick={removeStore} style={{ marginLeft: '10px' }}>
+        Reset to System Default (Remove Key)
+      </button>
     </div>
   );
-}
+};
+
+export default ThemeSwitcher;
 ```
+
+## 📖 API Reference
+
+### `useLocalstorage(storeName, initialData)`
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `storeName` | `string` | **Yes** | The unique key used to store data in `localStorage`. |
+| `initialData` | `any` | **Yes** | The default value to use if the key does not exist yet. |
+
+> **Note:** If `storeName` or `initialData` are missing, the hook will throw an error to prevent silent failures.
+
+#### Return Object
+
+The hook returns an object containing the current state and utility functions:
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `getStore` | `any` | The current value of the storage item. Acts like the state variable in `useState`. |
+| `setStore` | `(data: any) => void` | Updates the state and persists it to `localStorage`. Accepts any JSON-serializable data. |
+| `removeStore` | `() => void` | Removes the specific key from `localStorage` and resets state to `null`. |
+| `clearAllStore` | `() => void` | **Caution:** Clears **all** data in `localStorage` for the domain. |
+
+## 🛠 Under the Hood
+
+### Safety & Error Boundaries
+Directly accessing `localStorage` can be dangerous in modern web development (e.g., inside Iframes, Incognito mode, or when quotas are exceeded).
+This hook wraps all storage operations in `try/catch` blocks. If an error occurs (like a JSON parse error), it logs the issue to the console gracefully and falls back to your `initialData` or `null`, ensuring your React app doesn't crash.
+
+### Cross-Tab Reactivity
+The hook attaches an event listener to the window's `storage` event.
+1. When Tab A updates the key `'user_data'`, the browser fires an event.
+2. Tab B catches this event, parses the new value, and updates its local React state immediately.
+3. This ensures all open tabs stay in perfect sync without a page reload.
 
 ---
 
-## Key Features
-
-### 1. Reactive State Management
-
-The hook uses `useState` to provide reactive state that automatically re-renders your components when localStorage changes:
-
-```js
-const [getStore, setGetStore] = useState(() => {
-  try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : initialData;
-  } catch (err) {
-    console.error(`Error reading localStorage key "${key}":`, err);
-    localStorage.removeItem(key);
-    return initialData;
-  }
-});
-```
-
-### 2. Cross-Tab Synchronization
-
-The hook listens for storage events to keep multiple tabs in sync:
-
-```js
-useEffect(() => {
-  const handleStoreChange = (e) => {
-    if (e.key === key) {
-      try {
-        if (e.newValue === null) {
-          setGetStore(null);
-        } else {
-          setGetStore(JSON.parse(e.newValue));
-        }
-      } catch (err) {
-        console.error(`Error parsing storage event for key "${key}":`, err);
-        setGetStore(null);
-      }
-    }
-  };
-
-  window.addEventListener('storage', handleStoreChange);
-  return () => window.removeEventListener('storage', handleStoreChange);
-}, [key]);
-```
-
-### 3. Safe Initialization
-
-The hook validates inputs and safely initializes localStorage:
-
-```js
-if (!storeName || initialData === undefined) {
-  throw new Error("useLocalstorage: storeName and initialData are required.");
-}
-```
-
-### 4. Error Resilience
-
-All operations are wrapped in try/catch blocks with meaningful error messages and fallback behavior.
-
----
-
-## Internals
-
-### Lifecycle-Safe Initialization
-
-When the component mounts, the hook checks if localStorage already contains the key:
-
-```js
-useEffect(() => {
-  try {
-    const existing = localStorage.getItem(key);
-    if (existing === null) {
-      setStore(initialData);
-    }
-  } catch (err) {
-    console.error(`Error initializing localStorage key "${key}":`, err);
-  }
-}, [key, initialData, setStore]);
-```
-
-This prevents overwriting existing values.
-
-### Pure React API
-
-* Uses `useState` for reactive state management
-* Uses `useCallback` to memoize methods
-* Uses `useEffect` for storage event listeners and initialization
-* Safe to use inside other hooks and effects
-* Designed for composability in any React component
-
----
-
-## File Structure
-
-```
-use-localstorage-hook/
-├── src/
-│   └── useLocalstorage.js
-├── dist/
-│   └── index.js
-├── package.json
-└── README.md
-```
-
----
-
-## Author
-
-**Md Umar Siddique**
-
-* GitHub: [@umarSiddique010](https://github.com/umarSiddique010)
-* LinkedIn: [md-umar-siddique](https://linkedin.com/in/md-umar-siddique)
-* Dev.to: [@umarSiddique010](https://dev.to/umarsiddique010)
-
----
-
-## License
-
-MIT © 2025 Md Umar Siddique
-
----
-
-## Final Note
-
-This hook solves a **real problem**: managing persistent state in a clean, reactive, and React-friendly way with cross-tab synchronization. It reflects an engineering mindset focused on **clarity**, **reusability**, **reactivity**, and **edge case safety** — all in under 3KB of code.
-
-If it saves you time, please consider starring and sharing.
+<div align="center">
+  <p><strong>Developed with ❤️ by Md Umar Siddique</strong></p>
+  <a href="https://www.linkedin.com/in/md-umar-siddique-1519b12a4/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://www.npmjs.com/~umarSiddique010"><img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="NPM" /></a>
+  <a href="https://dev.to/umarsiddique010"><img src="https://img.shields.io/badge/DEV.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white" alt="DEV Community" /></a>
+  <a href="https://github.com/umarSiddique010"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+  <a href="https://x.com/umarSiddique010"><img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter" /></a>
+</div>
