@@ -1,6 +1,6 @@
 {
   "name": "@mdus/use-localstorage-hook",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -15,16 +15,16 @@
   ],
   "description": "React hook to manage localStorage state with sync, reactivity, and cross-tab updates.",
   "keywords": [
-  "react",
-  "react-hook",
-  "localStorage",
-  "storage",
-  "custom-hook",
-  "useLocalStorage",
-  "browser-storage",
-  "frontend-utility",
-  "react-abstractions"
-],
+    "react",
+    "react-hook",
+    "localStorage",
+    "storage",
+    "custom-hook",
+    "useLocalStorage",
+    "browser-storage",
+    "frontend-utility",
+    "react-abstractions"
+  ],
   "author": "Md Umar Siddique",
   "license": "MIT",
   "repository": {
