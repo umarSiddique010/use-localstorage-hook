@@ -1,5 +1,5 @@
 
-# <img src="./assets/icon.png" height="45" align="top"> @mdus/use-localstorage-hook @mdus/use-localstorage-hook
+# <img src="./assets/icon.ico" height="45" align="top"> @mdus/use-localstorage-hook
 
 A robust, zero-dependency React hook to manage localStorage state with cross-tab synchronization and reactivity.
 
